@@ -1,6 +1,6 @@
 # BasicFlow
 
-Repository for the project carried out as part of CS7.404 Digital Image Processing at IIIT Hyderabad in the Monsoon '25 semester.
+Repository for the project carried out as part of the **CS7.404 Digital Image Processing** course at IIIT Hyderabad in the Monsoon '25 semester.
 
 ## Overview
 
