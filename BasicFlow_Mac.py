@@ -31,9 +31,10 @@ class SteadyFlowStabilizer:
                  adaptive_weight_scale=20.0,
                  color_outside_image_area_bgr=(0, 0, 0),
                  use_gpu=True,
+                 use_mps=False,
                  num_workers=None):
         '''
-        Constructor with additional GPU and parallelization options.
+        Constructor with additional GPU, MPS and parallelization options.
         '''
         self.temporal_smoothing_radius = temporal_smoothing_radius
         self.spatial_smoothness_sigma = spatial_smoothness_sigma
@@ -44,10 +45,17 @@ class SteadyFlowStabilizer:
         self.adaptive_weight_scale = adaptive_weight_scale
         self.color_outside_image_area_bgr = color_outside_image_area_bgr
         self.use_gpu = use_gpu and torch.cuda.is_available()
+        self.use_mps = use_mps and torch.backends.mps.is_available() and not self.use_gpu
         self.num_workers = num_workers or max(1, cpu_count() - 2)
         
         # Initialize RAFT model
-        self.device = torch.device('cuda' if self.use_gpu else 'cpu')
+        if self.use_gpu:
+            self.device = torch.device('cuda')
+        elif self.use_mps:
+            self.device = torch.device('mps')
+        else:
+            self.device = torch.device('cpu')
+            
         if raft_large is not None:
             self.raft_model = raft_large(pretrained=True).to(self.device)
             self.raft_model.eval()
@@ -215,15 +223,15 @@ class SteadyFlowStabilizer:
         # Prepare frame pairs for parallel processing
         frame_pairs = [(t, frames) for t in range(num_frames - 1)]
         
-        # Process in batches to manage GPU memory
-        batch_size = 4 if self.use_gpu else self.num_workers
+        # Process in batches to manage GPU/MPS memory
+        batch_size = 4 if (self.use_gpu or self.use_mps) else self.num_workers
         
         with tqdm.tqdm(total=num_frames - 1, desc="Computing optical flow") as pbar:
             for i in range(0, len(frame_pairs), batch_size):
                 batch = frame_pairs[i:i + batch_size]
                 
-                if self.use_gpu and self.raft_model is not None:
-                    # Sequential processing for GPU to avoid memory issues
+                if (self.use_gpu or self.use_mps) and self.raft_model is not None:
+                    # Sequential processing for GPU/MPS to avoid memory issues
                     for frame_data in batch:
                         t, clean_flow, homography = self._process_frame_pair(frame_data)
                         flows[t] = clean_flow
@@ -307,7 +315,7 @@ class SteadyFlowStabilizer:
 
     def _smooth_pixel_profiles_jacobi_parallel(self, C, homographies, frame_width, frame_height):
         '''
-        Parallelize Jacobi energy optimization across frames using threading (CPU-safe with GPU).
+        Parallelize Jacobi energy optimization across frames using threading (CPU-safe with GPU/MPS).
         '''
         num_frames, h, w, _ = C.shape
         
@@ -333,7 +341,7 @@ class SteadyFlowStabilizer:
             frame_args = [(t, P, C, offsets, temporal_weights, adaptive_weights, num_frames, radius) 
                         for t in range(num_frames)]
             
-            # Use ThreadPoolExecutor instead of ProcessPoolExecutor for GPU safety
+            # Use ThreadPoolExecutor instead of ProcessPoolExecutor for GPU/MPS safety
             with concurrent.futures.ThreadPoolExecutor(max_workers=self.num_workers) as executor:
                 results = list(executor.map(self._jacobi_update_frame, frame_args))
             
@@ -449,8 +457,9 @@ def main():
         spatial_smoothness_sigma=0.1,
         motion_inpaint_iterations=2,
         smoothing_iterations=5,
-        use_gpu=True,
-        num_workers=8 
+        use_gpu=False,
+        use_mps=True,  # Enable MPS for Mac
+        num_workers=1 
     )
     
     stabilizer.stabilize(input_path, output_path)
