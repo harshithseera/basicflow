@@ -10,5 +10,6 @@ SteadyFlow stabilizes videos by enforcing spatial smoothness on optical flow, re
 
 
 # References
-[OpticalFlow-Visualization, MATLAB optical flow visualization following Baker et al. (ICCV 2007) as used by the MPI-Sintel challenge](https://in.mathworks.com/matlabcentral/fileexchange/175668-opticalflow-visualization)
-[For understanding optical flow visualisation](https://medium.com/@ml6vq/understanding-optical-flow-visualization-293471c97456)
+- [OpticalFlow-Visualization, MATLAB optical flow visualization following Baker et al. (ICCV 2007) as used by the MPI-Sintel challenge](https://in.mathworks.com/matlabcentral/fileexchange/175668-opticalflow-visualization)
+- [For understanding optical flow visualisation](https://medium.com/@ml6vq/understanding-optical-flow-visualization-293471c97456)
+- 
