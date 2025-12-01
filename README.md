@@ -52,7 +52,7 @@ The provided code, BasicFlow, implements a hybrid approach. It constructs a **St
 The implementation is not *exactly* SteadyFlow or MeshFlow. It is a modernized, simplistic variant. The specific differences are:
 
 1.  **No Temporal Outlier Detection:** The code does not check `flow_acc` for temporal smoothness to update the mask as described in Equation 1 of the SteadyFlow paper.
-2.  **No Iterative Refinement Loop:** The global process (Estimate -> Inpaint -> Stabilize -> Refine) described in Section 4.4 of the SteadyFlow paper is removed. [cite_start]The code runs strictly sequentially once.
+2.  **No Iterative Refinement Loop:** The global process (Estimate -> Inpaint -> Stabilize -> Refine) described in Section 4.4 of the SteadyFlow paper is removed. The code runs strictly sequentially once.
 3.  **Different Motion Completion:** The ASAP energy minimization (Equation 2 in SteadyFlow) is replaced by the iterative `cv2.blur` loop.
 4.  **Hybrid Smoothing Parameters:** It uses the **SteadyFlow** solver (Jacobi iteration on dense pixels) but drives it with **MeshFlow** parameters. Instead of iteratively searching for $\lambda_t$ (SteadyFlow), it predicts $\lambda_t$ using the MeshFlow linear regression formulas based on Homography translation and affine components.
 5.  **RAFT Integration:** The use of `torchvision.models.optical_flow.raft_large` replaces the optical flow and feature tracking methods of both papers, serving as the foundational accuracy boost that allows the other simplifications to work effectively.
