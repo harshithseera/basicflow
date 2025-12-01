@@ -1,6 +1,6 @@
 # BasicFlow
 
-Course repository for CS7.404 Digital Image Processing.
+Repository for the project carried out as part of CS7.404 Digital Image Processing at IIIT Hyderabad in the Monsoon '25 semester.
 
 ## Overview
 
