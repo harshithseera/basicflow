@@ -67,6 +67,13 @@ The implementation in BasicFLow addresses several key limitations identified in 
 | **Feature Tracking Brittleness** | Feature tracks (used in MeshFlow) are sparse, uneven, and hard to maintain in textureless regions. | **Solution:** By sticking to the **SteadyFlow dense model** (Pixel Profiles) but powering it with **RAFT**, the code avoids the need for sparse feature tracking entirely. RAFT is highly robust in textureless regions compared to traditional KLT. |
 | **Parameter Tuning Latency** | SteadyFlow requires iterative refinement to find the smoothing weight $\lambda_t$, which is "impractical for the online scenario". | **Solution:** The code imports the **PAPS (Predicted Adaptive Path Smoothing)** logic from MeshFlow. It calculates $\lambda_t$ instantly using the global homography, avoiding the costly iterative search while keeping the high-quality dense warp. |
 
+# Files Structure
+- `BasicFlow.py`: Main pipeline implementing the simplified BasicFlow method.
+- `metrics`: Folder containing code to compute video stabilization metrics (Stability, Distortion, Cropping Ratio).
+- `BasicFlow_Mac.py`: Main pipeline adapted to use MPS for Mac systems.
+- `compare.py`: Script to create comparison videos showing Input, BasicFlow, and SteadyFlow outputs side-by-side.
+- `visualize_optical_flow.py` & `visualize_optical_flow.m`: Utility to visualize optical flow fields using color coding.
+
 # Results
 Results for this are available on the YouTube playlist: [BasicFlow Results](https://youtube.com/playlist?list=PL2gpCaN0OukK0CCQrF3CXxn65Ktbnit_8&si=33LH0sceXNzwXJ3R)
 
