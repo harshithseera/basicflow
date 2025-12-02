@@ -68,7 +68,7 @@ The implementation in BasicFLow addresses several key limitations identified in 
 | **Parameter Tuning Latency** | SteadyFlow requires iterative refinement to find the smoothing weight $\lambda_t$, which is "impractical for the online scenario". | **Solution:** The code imports the **PAPS (Predicted Adaptive Path Smoothing)** logic from MeshFlow. It calculates $\lambda_t$ instantly using the global homography, avoiding the costly iterative search while keeping the high-quality dense warp. |
 
 # Results
-Results for this are available on the YouTube playlist: [BasicFlow Results](youtube.com/playlist?list=PL2gpCaN0OukK0CCQrF3CXxn65Ktbnit_8&si=33LH0sceXNzwXJ3R)
+Results for this are available on the YouTube playlist: [BasicFlow Results](https://youtube.com/playlist?list=PL2gpCaN0OukK0CCQrF3CXxn65Ktbnit_8&si=33LH0sceXNzwXJ3R)
 
 # References
 - [OpticalFlow-Visualization, MATLAB optical flow visualization following Baker et al. (ICCV 2007) as used by the MPI-Sintel challenge](https://in.mathworks.com/matlabcentral/fileexchange/175668-opticalflow-visualization)
